@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+</head>
+<body>
+    <div>
+        <h1 id="h1">Players See:</h1>
+        <p id="prompt-status"></p>
+        <p id="player-status"></p>
+    </div>
+
+    <a href="#" id="prompt">Display Prompt</a><br>
+    <a href="#" id="lockout">Toggle Lockout players</a><br>
+    <textarea id="player-log" cols="100" rows="20"></textarea><br>
+    <input id="player-message-input" type="text" size="100"><br>
+    <input id="player-message-submit" type="button" value="Send">
+
+    {{ room_name|json_script:"room-name" }}
+    <script>
+        let i = 0;;
+        const gameName = JSON.parse(document.getElementById('room-name').textContent);
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/game/'
+            + gameName
+            + '/'
+        );
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if(data.message != undefined){
+                document.querySelector('#player-log').value += (data.message + '\n');
+            }
+            if(data.host){
+                document.querySelector("#prompt-status").innerHTML = (data.host);
+            }
+            if (data.p_status != undefined){
+                document.querySelector("#player-status").innerHTML = ("Player Input: " +data.p_status );
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#player-message-input').focus();
+        document.querySelector('#player-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#player-message-submit').click();
+            }
+        };
+
+        document.querySelector('#prompt').onclick = function(e) {
+            // const messageInputDom = document.querySelector('#chat-message-input');
+            const host_message = "TEST PROMPT " + i; 
+        
+            chatSocket.send(JSON.stringify({
+                'host': host_message
+            }));
+            i++;
+        };
+        document.querySelector("#lockout").onclick = function(e){
+            const player_message = "lockout";
+            chatSocket.send(JSON.stringify(
+                {
+                    "player": player_message
+            }
+            ));
+        }
+
+    </script>
+</body>
+</html>
