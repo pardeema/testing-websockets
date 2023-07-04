@@ -11,11 +11,17 @@
         <p id="player-status"></p>
     </div>
 
-    <a href="#" id="prompt">Display Prompt</a><br>
-    <a href="#" id="lockout">Toggle Lockout players</a><br>
+    
+    
+    <h3>Enter a prompt for the players</h3>
+    <input id="host-message-input" type="text" size="100"><br>
+    <input id="host-message-submit" type="button" value="Send">
+    <input type="button" value="Test Prompt" href="#" id="prompt"><br>
+    <input type="button" value="Toggle Lockout Players" id="lockout"><br>
+
+    <br><br>
+    <h2 id='h2'>Player Responses:</h2>
     <textarea id="player-log" cols="100" rows="20"></textarea><br>
-    <input id="player-message-input" type="text" size="100"><br>
-    <input id="player-message-submit" type="button" value="Send">
 
     {{ room_name|json_script:"room-name" }}
     <script>
@@ -45,10 +51,10 @@
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#player-message-input').focus();
-        document.querySelector('#player-message-input').onkeyup = function(e) {
+        document.querySelector('#host-message-input').focus();
+        document.querySelector('#host-message-input').onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#player-message-submit').click();
+                document.querySelector('#host-message-submit').click();
             }
         };
 
@@ -61,6 +67,16 @@
             }));
             i++;
         };
+        document.querySelector('#host-message-submit').onclick = function(e) {
+            const host_message = document.querySelector('#host-message-input').value;
+
+            chatSocket.send(JSON.stringify( {
+                'host': host_message,
+                "player": "lockout"
+            }));
+
+        }
+
         document.querySelector("#lockout").onclick = function(e){
             const player_message = "lockout";
             chatSocket.send(JSON.stringify(
