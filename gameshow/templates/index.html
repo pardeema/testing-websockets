@@ -27,7 +27,7 @@
             if (document.getElementById('host').checked){
                 window.location.pathname = '/game/' + roomName + '/host';
             }else if (document.getElementById('player').checked){
-                window.location.pathname = '/game/' + roomName + '/';
+                window.location.pathname = '/game/' + roomName + '/user';
             }else {
                 document.getElementById("alert").innerHTML = "Must choose a role!"
             }

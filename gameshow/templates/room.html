@@ -23,7 +23,7 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             if(data.message != undefined){
-                document.querySelector('#chat-log').value += (data.message + '\n');
+                document.querySelector('#chat-log').value += ( data.message + '\n');
             }
             if(data.host){
                 document.querySelector("#chat-log").value += ("ADMIN PROMPT: " + data.host + "\n");
@@ -66,7 +66,7 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': "{{user}}: " + message
             }));
             messageInputDom.value = '';
         };

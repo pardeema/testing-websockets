@@ -9,10 +9,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = "game_%s" % self.room_name
         
-        #IDK session
-        #self.scope["session"]["seed"] = random.randint(1,1000)
-        
-        print(self.scope["session"])
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
@@ -35,7 +31,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name, {"type": "chat_message", "message": message, "host": host, "player":player, "p_status": p_status, }
 
         )
-        #await sync_to_async(self.scope["session"].save)()
 
     # Receive message from room group
     async def chat_message(self, event):
